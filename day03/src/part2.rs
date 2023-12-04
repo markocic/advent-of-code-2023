@@ -1,12 +1,16 @@
 use std::fs;
 
 fn main() {
-    let filepath = "src/edge_cases.txt";
+    let filepath = "src/input.txt";
 
     let contents = fs::read_to_string(filepath).expect("Error reading the file.");
 
-    let lines: Vec<&str> = contents.split("\n").collect();
+    let sum = process(&contents);
+    println!("{}", sum);
+}
 
+fn process(contents: &str) -> usize {
+    let lines: Vec<&str> = contents.split("\n").collect();
     let count_matrix = generate_count_matrix(&lines);
     let product_matrix = generate_product_matrix(&lines);
 
@@ -28,7 +32,8 @@ fn main() {
 
     display_matrix(count_matrix);
     display_matrix(product_matrix);
-    println!("{}", sum);
+    sum
+
 }
 
 fn generate_product_matrix(lines: &Vec<&str>) -> Vec<Vec<usize>> {
@@ -140,11 +145,11 @@ fn find_count(lines: &Vec<&str>, x: isize, y: usize) -> usize {
                 last_was_numeric = false;
             }
         }
+        last_was_numeric = false;
     }
 
     return count;
 }
-
 fn is_numeric(contents: &Vec<&str>, x: isize, y: isize) -> bool {
     match (usize::try_from(x), usize::try_from(y)) {
         (Ok(x), Ok(y)) => {
