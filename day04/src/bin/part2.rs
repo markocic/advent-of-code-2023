@@ -1,16 +1,17 @@
+use std::collections::HashMap;
 use std::fmt;
 use std::fs;
 
 fn main() {
 
-    // let contents = fs::read_to_string("src/input.txt").expect("Error reading file.");
+    let contents = fs::read_to_string("src/input.txt").expect("Error reading file.");
 
-    let contents = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
-Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
-Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
-Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
-Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11".to_string();
+//     let contents = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
+// Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
+// Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
+// Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
+// Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
+// Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11".to_string();
 
     let result = process(contents);
     println!("{}", result);
@@ -20,13 +21,71 @@ fn process(input: String) -> usize {
     
     let cards = parse_cards(input);
 
-    let mut sum = 0;
-    let mut counter: usize = 0;
-    for card in &cards {
-        
+    let map = build_hashmap(&cards);
+    let mut count_map = build_count_hashmap(&cards);
+
+    for card in cards {
+
+        let new_cards = match map.get(&card.index) {
+            Some(c) => c,
+            None => continue
+        };
+
+        for new_card in new_cards {
+            let current_count = match count_map.get(new_card) {
+                Some(x) => x,
+                None => continue
+            };
+
+            let this_card_count = match count_map.get(&card.index) {
+                Some(x) => x,
+                None => continue
+            };
+
+            let _ = count_map.insert(*new_card, current_count + this_card_count);
+        }
     }
 
-    sum
+    count_map.into_values().sum()
+}
+
+fn build_count_hashmap(cards: &Vec<Card>) -> HashMap<usize, usize> {
+    let mut result: HashMap<usize, usize> = HashMap::new();
+
+    for card in cards {
+        result.insert(card.index, 1);
+    }    
+
+    result
+
+}
+
+fn build_hashmap(cards: &Vec<Card>) -> HashMap<usize, Vec<usize>> {
+    let mut result : HashMap<usize, Vec<usize>> = HashMap::new();
+
+    let mut counter : usize = 0;
+    for card in cards {
+        for my_num in &card.my_numbers {
+
+            if card.winning_numbers.contains(my_num) {
+                counter += 1;
+            }
+        }
+
+        let mut current: Vec<usize> = Vec::new();
+
+        if counter != 0 {
+            for i in (card.index + 1)..(card.index + counter + 1) {
+                current.push(i);
+            }
+        }
+
+        result.insert(card.index, current);
+        counter = 0;
+
+    }
+
+    result
 }
 
 fn parse_cards(input: String) -> Vec<Card> {
