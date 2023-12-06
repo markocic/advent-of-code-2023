@@ -1,0 +1,17 @@
+Seed 1: 100644325
+Seed 2: 100644325
+Seed 3: 4187781657
+Seed 4: 100644325
+Seed 5: 37806486
+Seed 6: 0
+Seed 7: 3361761505
+Seed 8: 0
+Seed 9: 116000770
+Seed 10: 489318783
+
+Did you somehow end up here?
+Asking what the hell is this?
+Well do I have a story to tell you.
+I ran 10 threads to calculate min for each seed.
+Seeing as there are 2 zero values (seed 6, 8) I got lucky :)
+Seed 5 was indeeded the lowest one and I got my gold star.
