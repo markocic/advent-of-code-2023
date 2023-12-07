@@ -3,12 +3,12 @@ use std::{fs, collections::HashMap, u8};
 use std::cmp::Ordering;
 
 fn main() {
-    // let contents = fs::read_to_string("src/input.txt").expect("Could not read from file.");
-    let contents = "32T3K 765
+    let contents = fs::read_to_string("src/input.txt").expect("Could not read from file.");
+    /* let contents = "32T3K 765
 T55J5 684
 KK677 28
 KTJJT 220
-QQQJA 483".to_string();
+QQQJA 483".to_string(); */
 
     let result = process(contents);
     println!("{}", result);
@@ -55,8 +55,22 @@ fn construct(pair: Vec<&str>) -> Hand {
 fn get_type(cards: String) -> Type {
 
     let mut counter: HashMap<char, u8> = HashMap::new();
+    cards.chars().for_each(|card| *counter.entry(card).or_default() += 1);
 
-    cards.chars().for_each(|card| *counter.entry(card.to_owned()).or_default() += 1);
+    println!("current before: {:?}", counter);
+    let mut highest_freq = (0_u8, 'Q');
+    for (k, v) in &counter {
+        if *k == 'J' { continue; }
+        if *v >= highest_freq.0 { 
+            highest_freq.0 = *v;
+            highest_freq.1 = *k;
+        };
+    }
+
+    let joker = counter.remove(&'J').unwrap_or(0);
+    *counter.entry(highest_freq.1).or_default() += joker;
+
+    println!("{}: {:?}; {:?}; {:?}", cards, counter, &highest_freq, joker);
 
     /* This is a bit agressive approach so I'm hoping I didn't just shoot myself in the foot here. */
     if counter.keys().len() == 1 { return Type::K5 };
@@ -143,4 +157,19 @@ enum Type {
 #[derive(PartialEq, PartialOrd, Debug, Eq)]
 enum Card {
     J, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, T, Q, K, A
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::process;
+
+
+    #[test]
+    fn cases() {
+        let contents = "JJJJJ 10
+JJJJK 20
+JJJKK 30
+JJKKK 40".to_string();
+        assert_eq!(process(contents), 300);
+    }
 }
