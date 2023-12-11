@@ -27,8 +27,6 @@ fn find_chain(matrix: &Vec<Vec<char>>, start: Point) -> usize {
     let mut visited: HashSet<Point> = HashSet::new();
     let mut stack : Vec<Point> = Vec::new();
 
-    let directions : Vec<(isize, isize)> = vec![NORTH, SOUTH, WEST, EAST];
-
     stack.push(start);
 
     while !stack.is_empty() {
@@ -36,7 +34,7 @@ fn find_chain(matrix: &Vec<Vec<char>>, start: Point) -> usize {
         let curr = stack.pop().unwrap();
         visited.insert(curr);
 
-        for direction in &directions {
+        for direction in find_valid_directions(matrix[curr.0][curr.1]) {
             let n : (isize, isize) = (curr.0 as isize + direction.0, curr.1 as isize + direction.1);
             println!("is {:?} a valid point? ", n);
 
@@ -49,7 +47,7 @@ fn find_chain(matrix: &Vec<Vec<char>>, start: Point) -> usize {
 
             println!("Checking point {:?}", n);
 
-            if is_neighbor(matrix, &n, *direction) {
+            if is_neighbor(matrix, &n, direction) {
                 println!("Point {:?} is a valid neighbor", n);
                 stack.push(n);
             }
@@ -57,6 +55,21 @@ fn find_chain(matrix: &Vec<Vec<char>>, start: Point) -> usize {
     }
     println!("Path taken: {:?}", visited);
     visited.len() / 2
+}
+
+fn find_valid_directions(c: char) -> Vec<(isize, isize)> {
+
+    match c {
+        '|' => vec![NORTH, SOUTH],
+        'S' => vec![NORTH, SOUTH, WEST, EAST],
+        '7' => vec![SOUTH, WEST],
+        'F' => vec![SOUTH, EAST],
+        'J' => vec![NORTH, WEST],
+        'L' => vec![NORTH, EAST],
+        '-' => vec![EAST, WEST],
+
+        _ => vec![]
+    }    
 }
 
 fn is_valid(matrix: &Vec<Vec<char>>, n: (isize, isize)) -> bool {
