@@ -1,0 +1,6 @@
+
+Seed 1: 489318783
+cargo run --release --bin part2  10.48s user 0.01s system 99% cpu 10.546 total
+
+Seed 1: 489318783
+cargo run --bin part2  171.05s user 0.10s system 99% cpu 2:52.36 total
